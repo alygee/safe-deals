@@ -103,4 +103,4 @@ docker compose exec kafka /opt/kafka/bin/kafka-console-consumer.sh --bootstrap-s
 - [x] Redis: кэш и rate limiting
 - [x] nginx + haproxy перед репликами `deals`
 - [x] Prometheus + Grafana, нагрузочный тест k6 и отчёт
-- [ ] Дизайн-документ `docs/design.md`
+- [x] [Дизайн-документ](docs/design.md)
