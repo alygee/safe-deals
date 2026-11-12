@@ -1,0 +1,144 @@
+ Container safe-deals-k6-run-ecde98ec942d Creating 
+ Container safe-deals-k6-run-ecde98ec942d Created 
+
+         /\      Grafana   /‾‾/  
+    /\  /  \     |\  __   /  /   
+   /  \/    \    | |/ /  /   ‾‾\ 
+  /          \   |   (  |  (‾)  |
+ / __________ \  |_|\_\  \_____/ 
+
+     execution: local
+        script: /scripts/deal-flow.js
+        output: -
+
+     scenarios: (100.00%) 1 scenario, 1000 max VUs, 1m0s max duration (incl. graceful stop):
+              * deals: 600.00 iterations/s for 30s (maxVUs: 200-1000, gracefulStop: 30s)
+
+
+running (0m01.0s), 0329/0329 VUs, 117 complete and 0 interrupted iterations
+deals   [   3% ] 0329/0329 VUs  01.0s/30s  600.00 iters/s
+
+running (0m02.0s), 0517/0518 VUs, 328 complete and 0 interrupted iterations
+deals   [   7% ] 0517/0518 VUs  02.0s/30s  600.00 iters/s
+
+running (0m03.0s), 0656/0656 VUs, 642 complete and 0 interrupted iterations
+deals   [  10% ] 0656/0656 VUs  03.0s/30s  600.00 iters/s
+
+running (0m04.0s), 0813/0816 VUs, 922 complete and 0 interrupted iterations
+deals   [  13% ] 0813/0816 VUs  04.0s/30s  600.00 iters/s
+
+running (0m05.0s), 0969/0970 VUs, 1208 complete and 0 interrupted iterations
+deals   [  17% ] 0969/0970 VUs  05.0s/30s  600.00 iters/s
+time="2026-11-12T08:20:54Z" level=warning msg="Insufficient VUs, reached 1000 active VUs and cannot initialize more" executor=constant-arrival-rate scenario=deals
+
+running (0m06.0s), 1000/1000 VUs, 1489 complete and 0 interrupted iterations
+deals   [  20% ] 1000/1000 VUs  06.0s/30s  600.00 iters/s
+
+running (0m07.0s), 1000/1000 VUs, 1817 complete and 0 interrupted iterations
+deals   [  23% ] 1000/1000 VUs  07.0s/30s  600.00 iters/s
+
+running (0m08.0s), 0999/1000 VUs, 2097 complete and 0 interrupted iterations
+deals   [  27% ] 0999/1000 VUs  08.0s/30s  600.00 iters/s
+
+running (0m09.0s), 1000/1000 VUs, 2403 complete and 0 interrupted iterations
+deals   [  30% ] 1000/1000 VUs  09.0s/30s  600.00 iters/s
+
+running (0m10.0s), 1000/1000 VUs, 2703 complete and 0 interrupted iterations
+deals   [  33% ] 1000/1000 VUs  10.0s/30s  600.00 iters/s
+
+running (0m11.0s), 0998/1000 VUs, 3059 complete and 0 interrupted iterations
+deals   [  37% ] 0998/1000 VUs  11.0s/30s  600.00 iters/s
+
+running (0m12.0s), 1000/1000 VUs, 3413 complete and 0 interrupted iterations
+deals   [  40% ] 1000/1000 VUs  12.0s/30s  600.00 iters/s
+
+running (0m13.0s), 0999/1000 VUs, 3757 complete and 0 interrupted iterations
+deals   [  43% ] 0999/1000 VUs  13.0s/30s  600.00 iters/s
+
+running (0m14.0s), 1000/1000 VUs, 4117 complete and 0 interrupted iterations
+deals   [  47% ] 1000/1000 VUs  14.0s/30s  600.00 iters/s
+
+running (0m15.0s), 1000/1000 VUs, 4446 complete and 0 interrupted iterations
+deals   [  50% ] 1000/1000 VUs  15.0s/30s  600.00 iters/s
+
+running (0m16.0s), 1000/1000 VUs, 4709 complete and 0 interrupted iterations
+deals   [  53% ] 1000/1000 VUs  16.0s/30s  600.00 iters/s
+
+running (0m17.0s), 1000/1000 VUs, 5019 complete and 0 interrupted iterations
+deals   [  57% ] 1000/1000 VUs  17.0s/30s  600.00 iters/s
+
+running (0m18.0s), 0999/1000 VUs, 5345 complete and 0 interrupted iterations
+deals   [  60% ] 0999/1000 VUs  18.0s/30s  600.00 iters/s
+
+running (0m19.0s), 1000/1000 VUs, 5688 complete and 0 interrupted iterations
+deals   [  63% ] 1000/1000 VUs  19.0s/30s  600.00 iters/s
+
+running (0m20.0s), 0999/1000 VUs, 6077 complete and 0 interrupted iterations
+deals   [  67% ] 0999/1000 VUs  20.0s/30s  600.00 iters/s
+
+running (0m21.0s), 0998/1000 VUs, 6406 complete and 0 interrupted iterations
+deals   [  70% ] 0998/1000 VUs  21.0s/30s  600.00 iters/s
+
+running (0m22.0s), 0999/1000 VUs, 6752 complete and 0 interrupted iterations
+deals   [  73% ] 0999/1000 VUs  22.0s/30s  600.00 iters/s
+
+running (0m23.0s), 0999/1000 VUs, 7081 complete and 0 interrupted iterations
+deals   [  77% ] 0999/1000 VUs  23.0s/30s  600.00 iters/s
+
+running (0m24.0s), 0999/1000 VUs, 7349 complete and 0 interrupted iterations
+deals   [  80% ] 0999/1000 VUs  24.0s/30s  600.00 iters/s
+
+running (0m25.0s), 1000/1000 VUs, 7608 complete and 0 interrupted iterations
+deals   [  83% ] 1000/1000 VUs  25.0s/30s  600.00 iters/s
+
+running (0m26.0s), 1000/1000 VUs, 7924 complete and 0 interrupted iterations
+deals   [  87% ] 1000/1000 VUs  26.0s/30s  600.00 iters/s
+
+running (0m27.0s), 1000/1000 VUs, 8287 complete and 0 interrupted iterations
+deals   [  90% ] 1000/1000 VUs  27.0s/30s  600.00 iters/s
+
+running (0m28.0s), 1000/1000 VUs, 8548 complete and 0 interrupted iterations
+deals   [  93% ] 1000/1000 VUs  28.0s/30s  600.00 iters/s
+
+running (0m29.0s), 1000/1000 VUs, 8898 complete and 0 interrupted iterations
+deals   [  97% ] 1000/1000 VUs  29.0s/30s  600.00 iters/s
+
+running (0m30.0s), 1000/1000 VUs, 9228 complete and 0 interrupted iterations
+deals   [ 100% ] 1000/1000 VUs  30.0s/30s  600.00 iters/s
+
+running (0m31.0s), 0686/1000 VUs, 9548 complete and 0 interrupted iterations
+deals ↓ [ 100% ] 1000/1000 VUs  30s  600.00 iters/s
+
+running (0m32.0s), 0000/1000 VUs, 10234 complete and 0 interrupted iterations
+deals ✓ [ 100% ] 0000/1000 VUs  30s  600.00 iters/s
+
+     ✗ paid
+      ↳  0% — ✓ 0 / ✗ 10234
+     ✗ completed
+      ↳  0% — ✓ 0 / ✗ 10234
+
+     checks.........................: 0.00% 0 out of 20468
+     data_received..................: 22 MB 681 kB/s
+     data_sent......................: 10 MB 312 kB/s
+   ✗ dropped_iterations.............: 7767  242.935287/s
+     http_req_blocked...............: avg=17.58µs  p(50)=6.23µs   p(95)=10.74µs  p(99)=402.98µs max=8ms     
+     http_req_connecting............: avg=8.65µs   p(50)=0s       p(95)=0s       p(99)=298.82µs max=7.91ms  
+     http_req_duration..............: avg=568.07ms p(50)=584.16ms p(95)=765.27ms p(99)=830.25ms max=924.41ms
+       { expected_response:true }...: avg=568.07ms p(50)=584.16ms p(95)=765.27ms p(99)=830.25ms max=924.41ms
+     ✗ { name:pay }.................: avg=581.3ms  p(50)=594.99ms p(95)=781.4ms  p(99)=840.28ms max=921.71ms
+   ✓ http_req_failed................: 0.00% 0 out of 51170
+     http_req_receiving.............: avg=82.2µs   p(50)=71.94µs  p(95)=124.57µs p(99)=326.47µs max=6.59ms  
+     http_req_sending...............: avg=28.08µs  p(50)=23.21µs  p(95)=47.13µs  p(99)=107.99µs max=4.19ms  
+     http_req_tls_handshaking.......: avg=0s       p(50)=0s       p(95)=0s       p(99)=0s       max=0s      
+     http_req_waiting...............: avg=567.96ms p(50)=584.07ms p(95)=765.14ms p(99)=830.15ms max=924.32ms
+     http_reqs......................: 51170 1600.489071/s
+     iteration_duration.............: avg=2.84s    p(50)=2.96s    p(95)=3.42s    p(99)=3.55s    max=3.8s    
+     iterations.....................: 10234 320.097814/s
+     vus............................: 685   min=329        max=1000
+     vus_max........................: 1000  min=329        max=1000
+
+
+running (0m32.0s), 0000/1000 VUs, 10234 complete and 0 interrupted iterations
+deals ✓ [ 100% ] 0000/1000 VUs  30s  600.00 iters/s
+time="2026-11-12T08:21:24Z" level=error msg="thresholds on metrics 'dropped_iterations, http_req_duration{name:pay}' have been crossed"
+

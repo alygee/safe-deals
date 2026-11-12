@@ -1,0 +1,6 @@
+apiVersion: 1
+providers:
+  - name: safe-deals
+    type: file
+    options:
+      path: /var/lib/grafana/dashboards

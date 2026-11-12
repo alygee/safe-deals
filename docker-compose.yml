@@ -1,0 +1,152 @@
+x-app: &app
+  build: .
+  environment:
+    DATABASE_URL: postgres://deals:deals@postgres:5432/deals
+    KAFKA_BROKERS: kafka:19092
+    REDIS_URL: redis://redis:6379
+  depends_on:
+    postgres:
+      condition: service_healthy
+    kafka:
+      condition: service_healthy
+    redis:
+      condition: service_healthy
+
+services:
+  postgres:
+    image: postgres:17
+    environment:
+      POSTGRES_USER: deals
+      POSTGRES_PASSWORD: deals
+      POSTGRES_DB: deals
+    command: ["postgres", "-c", "max_connections=300"] # до 8 реплик API × 30 + relay, консьюмер, psql
+    ports: ["5433:5432"]
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "deals"]
+      interval: 2s
+      retries: 15
+
+  kafka:
+    image: apache/kafka:3.9.0
+    ports: ["9094:9094"] # для приложений на хосте
+    environment:
+      KAFKA_NODE_ID: 1
+      KAFKA_PROCESS_ROLES: broker,controller
+      KAFKA_LISTENERS: INTERNAL://:19092,EXTERNAL://:9094,CONTROLLER://:9093
+      KAFKA_ADVERTISED_LISTENERS: INTERNAL://kafka:19092,EXTERNAL://localhost:9094
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INTERNAL:PLAINTEXT,EXTERNAL:PLAINTEXT,CONTROLLER:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@localhost:9093
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+    healthcheck:
+      test: ["CMD-SHELL", "/opt/kafka/bin/kafka-broker-api-versions.sh --bootstrap-server localhost:9094 > /dev/null 2>&1"]
+      interval: 5s
+      retries: 20
+
+  redis:
+    image: redis:7.4-alpine
+    ports: ["6379:6379"]
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 2s
+      retries: 15
+
+  clickhouse:
+    image: clickhouse/clickhouse-server:24.8
+    environment:
+      CLICKHOUSE_USER: analytics
+      CLICKHOUSE_PASSWORD: analytics
+      CLICKHOUSE_DB: analytics
+    ports: ["8123:8123"]
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:8123/ping"]
+      interval: 2s
+      retries: 30
+
+  # Stateless API за haproxy, масштабируется: docker compose up -d --scale deals=4.
+  # haproxy и Prometheus находят реплики через DNS Docker. Снаружи доступно только через nginx (:8080).
+  deals:
+    <<: *app
+    deploy:
+      replicas: 2
+    environment:
+      DATABASE_URL: postgres://deals:deals@postgres:5432/deals
+      REDIS_URL: redis://redis:6379
+      TRUST_PROXY_HOPS: 2 # nginx + haproxy
+      PG_POOL_MAX: 30 # × число реплик < max_connections PostgreSQL
+      RATE_LIMIT: ${RATE_LIMIT:-100} # для нагрузочного теста: RATE_LIMIT=10000000 docker compose up -d
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:3000/health"]
+      interval: 2s
+      retries: 30
+
+  haproxy:
+    image: haproxy:3.0-alpine
+    volumes: ["./infra/haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg:ro"]
+    ports: ["8404:8404"] # статистика (/stats) и метрики (/metrics)
+    depends_on: [deals]
+
+  nginx:
+    image: nginx:1.27-alpine
+    volumes: ["./infra/nginx.conf:/etc/nginx/nginx.conf:ro"]
+    ports: ["8080:8080"] # единая точка входа
+    depends_on: [haproxy, analytics]
+
+  analytics:
+    build: .
+    command: ["node", "dist/analytics.js"]
+    environment:
+      CLICKHOUSE_URL: http://clickhouse:8123
+      REDIS_URL: redis://redis:6379
+    depends_on:
+      clickhouse:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      relay:
+        condition: service_started # relay создаёт топик, который читает ClickHouse
+
+  relay:
+    <<: *app
+    command: ["node", "dist/relay.js"]
+
+  notifications:
+    <<: *app
+    command: ["node", "dist/notifications.js"]
+
+  # --- Наблюдаемость ---
+  kafka-exporter:
+    image: danielqsj/kafka-exporter:v1.8.0
+    command: ["--kafka.server=kafka:19092"]
+    depends_on:
+      kafka:
+        condition: service_healthy
+
+  prometheus:
+    image: prom/prometheus:v2.55.1
+    volumes: ["./infra/prometheus.yml:/etc/prometheus/prometheus.yml:ro"]
+    ports: ["9090:9090"]
+
+  grafana:
+    image: grafana/grafana:11.3.0
+    environment:
+      GF_AUTH_ANONYMOUS_ENABLED: "true"
+      GF_AUTH_ANONYMOUS_ORG_ROLE: Admin
+      GF_DASHBOARDS_DEFAULT_HOME_DASHBOARD_PATH: /var/lib/grafana/dashboards/safe-deals.json
+    volumes:
+      - ./infra/grafana/datasources.yml:/etc/grafana/provisioning/datasources/prometheus.yml:ro
+      - ./infra/grafana/dashboards.yml:/etc/grafana/provisioning/dashboards/safe-deals.yml:ro
+      - ./infra/grafana/dashboards:/var/lib/grafana/dashboards:ro
+    ports: ["3000:3000"]
+    depends_on: [prometheus]
+
+  # Нагрузочный тест: docker compose run --rm k6 (параметры: -e RATE=200 -e DURATION=30s)
+  k6:
+    image: grafana/k6:0.54.0
+    profiles: [loadtest]
+    volumes: ["./loadtest:/scripts:ro"]
+    command: ["run", "/scripts/deal-flow.js"]

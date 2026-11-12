@@ -1,0 +1,17 @@
+global:
+  scrape_interval: 5s
+
+scrape_configs:
+  # Все реплики сервиса deals через DNS Docker — масштабирование не требует правки конфига.
+  - job_name: deals
+    dns_sd_configs:
+      - names: ["deals"]
+        type: A
+        port: 3000
+        refresh_interval: 10s
+  - job_name: haproxy
+    static_configs:
+      - targets: ["haproxy:8404"]
+  - job_name: kafka
+    static_configs:
+      - targets: ["kafka-exporter:9308"]

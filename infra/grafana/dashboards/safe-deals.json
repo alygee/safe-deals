@@ -1,0 +1,59 @@
+{
+  "uid": "safe-deals",
+  "title": "safe-deals",
+  "refresh": "5s",
+  "time": { "from": "now-15m", "to": "now" },
+  "schemaVersion": 39,
+  "panels": [
+    {
+      "id": 1, "type": "timeseries", "title": "RPS по маршрутам и статусам",
+      "gridPos": { "x": 0, "y": 0, "w": 12, "h": 8 },
+      "fieldConfig": { "defaults": { "unit": "reqps" } },
+      "targets": [{ "refId": "A", "legendFormat": "{{method}} {{route}} {{status}}",
+        "expr": "sum by (method, route, status) (rate(http_request_duration_seconds_count{route!~\"/metrics|/health\"}[30s]))" }]
+    },
+    {
+      "id": 2, "type": "timeseries", "title": "Латентность p95 по маршрутам",
+      "gridPos": { "x": 12, "y": 0, "w": 12, "h": 8 },
+      "fieldConfig": { "defaults": { "unit": "s" } },
+      "targets": [{ "refId": "A", "legendFormat": "{{method}} {{route}}",
+        "expr": "histogram_quantile(0.95, sum by (le, method, route) (rate(http_request_duration_seconds_bucket{route!~\"/metrics|/health\"}[30s])))" }]
+    },
+    {
+      "id": 3, "type": "timeseries", "title": "Оплаты по результату",
+      "gridPos": { "x": 0, "y": 8, "w": 8, "h": 8 },
+      "fieldConfig": { "defaults": { "unit": "ops" } },
+      "targets": [{ "refId": "A", "legendFormat": "{{result}}", "expr": "sum by (result) (rate(deal_payments_total[30s]))" }]
+    },
+    {
+      "id": 4, "type": "timeseries", "title": "Event loop lag p99",
+      "gridPos": { "x": 8, "y": 8, "w": 8, "h": 8 },
+      "fieldConfig": { "defaults": { "unit": "s" } },
+      "targets": [{ "refId": "A", "legendFormat": "{{instance}}", "expr": "nodejs_eventloop_lag_p99_seconds" }]
+    },
+    {
+      "id": 5, "type": "timeseries", "title": "Пул соединений PostgreSQL",
+      "gridPos": { "x": 16, "y": 8, "w": 8, "h": 8 },
+      "targets": [
+        { "refId": "A", "legendFormat": "total {{instance}}", "expr": "pg_pool_total" },
+        { "refId": "B", "legendFormat": "waiting {{instance}}", "expr": "pg_pool_waiting" }
+      ]
+    },
+    {
+      "id": 6, "type": "timeseries", "title": "Outbox backlog и consumer lag",
+      "gridPos": { "x": 0, "y": 16, "w": 12, "h": 8 },
+      "targets": [
+        { "refId": "A", "legendFormat": "outbox unpublished", "expr": "max(outbox_unpublished)" },
+        { "refId": "B", "legendFormat": "lag {{consumergroup}}", "expr": "sum by (consumergroup) (kafka_consumergroup_lag{topic=\"deals.events\"})" }
+      ]
+    },
+    {
+      "id": 7, "type": "timeseries", "title": "haproxy: сессии и статус бэкендов",
+      "gridPos": { "x": 12, "y": 16, "w": 12, "h": 8 },
+      "targets": [
+        { "refId": "A", "legendFormat": "sessions {{server}}", "expr": "haproxy_server_current_sessions{proxy=\"deals\"}" },
+        { "refId": "B", "legendFormat": "up {{server}}", "expr": "haproxy_server_status{proxy=\"deals\", state=\"UP\"}" }
+      ]
+    }
+  ]
+}
